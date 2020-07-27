@@ -5,16 +5,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-}();
-
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
@@ -23,80 +13,58 @@ function _defineProperty(obj, key, value) {
   }return obj;
 }
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-var Base = function () {
-  function Base() {
-    _classCallCheck(this, Base);
-  }
-
-  _createClass(Base, [{
-    key: "coefficientK",
-    value: function coefficientK(x1, y1, x2, y2) {
+var buildBase = exports.buildBase = function buildBase() {
+  return {
+    coefficientK: function coefficientK(x1, y1, x2, y2) {
       return (y2 - y1) / (x2 - x1);
-    }
-  }, {
-    key: "calculateDX",
-    value: function calculateDX(speed, coefficientK) {
+    },
+
+    calculateDX: function calculateDX(speed, coefficientK) {
       return (speed ** 2 / (1 + coefficientK ** 2)) ** 0.5;
-    }
-  }, {
-    key: "calculateDY",
-    value: function calculateDY(dx, coefficientK) {
+    },
+
+    calculateDY: function calculateDY(dx, coefficientK) {
       return dx * coefficientK;
-    }
-  }, {
-    key: "coefficientB",
-    value: function coefficientB(x1, y1, x2, y2) {
+    },
+
+    coefficientB: function coefficientB(x1, y1, x2, y2) {
       return y1 - x1 * this.coefficientK(x1, y1, x2, y2);
-    }
-  }, {
-    key: "length",
-    value: function length(x1, y1, x2, y2) {
+    },
+
+    length: function length(x1, y1, x2, y2) {
       return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5;
-    }
-  }, {
-    key: "toRadian",
-    value: function toRadian(angle) {
+    },
+
+    toRadian: function toRadian(angle) {
       return angle * Math.PI / 180;
-    }
-  }, {
-    key: "rotate",
-    value: function rotate(x0, y0, x, y, angle) {
+    },
+
+    rotate: function rotate(x0, y0, x, y, angle) {
       return {
         x: x0 + (x - x0) * Math.cos(this.toRadian(angle)) - (y - y0) * Math.sin(this.toRadian(angle)),
         y: y0 + (x - x0) * Math.sin(this.toRadian(angle)) + (y - y0) * Math.cos(this.toRadian(angle))
       };
-    }
-  }, {
-    key: "pointInc",
-    value: function pointInc(point, dx, dy) {
+    },
+
+    pointInc: function pointInc(point, dx, dy) {
       return { x: point.x + dx, y: point.y + dy };
-    }
-  }, {
-    key: "pointDec",
-    value: function pointDec(point, dx, dy) {
+    },
+
+    pointDec: function pointDec(point, dx, dy) {
       return { x: point.x - dx, y: point.y - dy };
-    }
-  }, {
-    key: "changeValue",
-    value: function changeValue(flag, value, delta) {
+    },
+
+    changeValue: function changeValue(flag, value, delta) {
       return value += flag ? -1 * delta : delta;
-    }
-  }, {
-    key: "mutateObject",
-    value: function mutateObject(object, ind, fn) {
+    },
+
+    mutateObject: function mutateObject(object, ind, fn) {
       return object.map(function (el) {
         return _defineProperty({ x: el.x, y: el.y }, ind, fn(el[ind]));
       });
-    }
-  }, {
-    key: "createObject",
-    value: function createObject(tmpl, center) {
+    },
+
+    createObject: function createObject(tmpl, center) {
       var radius = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
 
       return tmpl.map(function (point) {
@@ -105,36 +73,36 @@ var Base = function () {
           y: center.y + point.y * radius
         };
       });
-    }
-  }, {
-    key: "pointBetweenTwoPoints",
-    value: function pointBetweenTwoPoints(asteroid, line) {
+    },
+
+    pointBetweenTwoPoints: function pointBetweenTwoPoints(asteroid, line) {
       return this.betweenTwoValues(asteroid.x, line[0].x, line[1].x) || this.betweenTwoValues(asteroid.y, line[0].y, line[1].y);
-    }
-  }, {
-    key: "betweenTwoValues",
-    value: function betweenTwoValues(a, b, c) {
+    },
+
+    betweenTwoValues: function betweenTwoValues(a, b, c) {
       var _ref2 = [Math.min(b, c), Math.max(b, c)];
       b = _ref2[0];
       c = _ref2[1];
 
       return a >= b && a <= c;
-    }
-  }, {
-    key: "lineAcrossAsteroid",
-    value: function lineAcrossAsteroid(asteroid, line) {
-      var dx1 = line[0].x - asteroid.x;
-      var dy1 = line[0].y - asteroid.y;
+    },
 
-      var dx2 = line[1].x - asteroid.x;
-      var dy2 = line[1].y - asteroid.y;
+    lineAcrossAsteroid: function lineAcrossAsteroid(_ref3, radius, line) {
+      var x = _ref3.x,
+          y = _ref3.y;
+
+      var dx1 = line[0].x - x;
+      var dy1 = line[0].y - y;
+
+      var dx2 = line[1].x - x;
+      var dy2 = line[1].y - y;
 
       var dx = dx1 - dx2;
       var dy = dy1 - dy2;
 
       var a = dx ** 2 + dy ** 2;
       var b = 2 * (dx1 * dx + dy1 * dy);
-      var c = dx1 ** 2 + dy1 ** 2 - (asteroid.radius * 0.9) ** 2;
+      var c = dx1 ** 2 + dy1 ** 2 - (radius * 0.9) ** 2;
 
       var d = b ** 2 - 4 * a * c;
 
@@ -147,86 +115,55 @@ var Base = function () {
 
       return (x1 >= 0 && x1 <= 1 || x1 >= 0 && x2 <= 1) && d > 0;
     }
-  }]);
-
-  return Base;
-}();
-
-exports.default = Base;
+  };
+};
 
 },{}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
-var COLOR_ASTEROID = exports.COLOR_ASTEROID = "#959595";
-var COLOR_SHIP = exports.COLOR_SHIP = "#6e7bd0";
-var COLOR_FIRE = exports.COLOR_FIRE = "#d05018";
-var COLOR_BULLET = exports.COLOR_BULLET = "#fff805";
-var COLOR_TEXT = exports.COLOR_TEXT = "#06ff4c";
-var COLOR_BOOM = exports.COLOR_BOOM = "#ff921a";
+var buildConstants = exports.buildConstants = function buildConstants() {
+    return {
+        COLOR_SHIP: "#6e7bd0",
+        COLOR_ASTEROID: "#959595",
+        COLOR_FIRE: "#d05018",
+        COLOR_BULLET: "#fff805",
+        COLOR_TEXT: "#06ff4c",
+        COLOR_BOOM: "#ff921a",
 
-var COUNT_LIVE = exports.COUNT_LIVE = 3;
+        COUNT_LIVE: 3,
 
-var LENGTH_PATH_BULLET = exports.LENGTH_PATH_BULLET = 400;
+        LENGTH_PATH_BULLET: 400,
+        MAX_SPEED_ROTATION_ASTEROID: 10,
 
-var SPEED_BULLET = exports.SPEED_BULLET = 5;
-var SPEED_SPACE_SHIP = exports.SPEED_SPACE_SHIP = 3;
-var SPEED_ROTATION_SHIP = exports.SPEED_ROTATION_SHIP = 3;
+        SPEED_BULLET: 5,
+        SPEED_SPACE_SHIP: 3,
+        SPEED_ROTATION_SHIP: 3,
 
-var LIST_RADIUS = exports.LIST_RADIUS = [10, 20, 30];
-var START_ANGLE = exports.START_ANGLE = 180;
+        LIST_RADIUS: [10, 20, 30],
+        START_ANGLE: 180,
 
-var SHOW_DIED_ASTEROID = exports.SHOW_DIED_ASTEROID = 100;
-var SHOW_BORN_SPACE_SHIP = exports.SHOW_BORN_SPACE_SHIP = 1000;
+        SHOW_DIED_ASTEROID: 100,
+        SHOW_BORN_SPACE_SHIP: 1000
+    };
+};
 
 },{}],3:[function(require,module,exports){
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-}();
-
-var _spaceShip = require("../objects/spaceShip");
-
-var _spaceShip2 = _interopRequireDefault(_spaceShip);
-
-var _cloud = require("../objects/cloud");
-
-var _cloud2 = _interopRequireDefault(_cloud);
-
 var _constants = require("./constants");
-
-var CONST = _interopRequireWildcard(_constants);
 
 var _levels = require("./levels");
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }newObj.default = obj;return newObj;
-  }
-}
+var _base = require("./base");
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
+var _objects = require("./objects");
+
+var _cloud = require("../objects/cloud");
+
+var _spaceShip = require("../objects/spaceShip");
 
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
@@ -238,352 +175,347 @@ function _toConsumableArray(arr) {
   }
 }
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
+(function () {
+  var Game = Game || {};
 
-var Game = function () {
-  function Game() {
-    _classCallCheck(this, Game);
+  Game.builder = function (namespace, value) {
+    var path = namespace.split(".");
 
-    this.container = document.getElementById("content");
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
-
-    this.footer = document.getElementById("footer");
-    this.playAgain = document.getElementById("play-again");
-
-    this.prevUpdateTime = 0;
-    this.height = 0;
-    this.width = 0;
-
-    this.level = 0;
-    this.live = CONST.COUNT_LIVE;
-    this.score = 0;
-
-    this.asteroids = [];
-    this.bullets = [];
-
-    this.showSpaseShip = true;
-    this.animation = '';
-
-    this.init();
-  }
-
-  _createClass(Game, [{
-    key: "init",
-    value: function init() {
-      var _this = this;
-
-      window.addEventListener("resize", function (x) {
-        return _this.onResize();
-      });
-      this.playAgain.addEventListener('click', function (e) {
-        return _this.restart();
-      });
-
-      this.start();
+    if (path[0] === "Game") {
+      path = path.slice(1);
     }
-  }, {
-    key: "start",
-    value: function start() {
-      var _this2 = this;
 
-      this.footer.style.display = "none";
+    return path.reduce(function (parent, element) {
+      if (typeof parent[element] === "undefined") {
+        parent[element] = {};
+      }
+      return parent[element];
+    });
+  };
 
-      window.addEventListener("keydown", function (e) {
-        return _this2.onKeydown(e);
-      });
-      window.addEventListener("keyup", function (e) {
-        return _this2.onKeyup(e);
-      });
-      this.onResize();
+  Game.builder("constants");
+  Game.constants = (0, _constants.buildConstants)();
+  Game.builder("levels");
+  Game.levels = (0, _levels.buildLevels)();
+  Game.builder("Game.base");
+  Game.base = (0, _base.buildBase)();
+  Game.builder("templates");
+  Game.templates = (0, _objects.buildObjects)();
 
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      this.cloud = new _cloud2.default(this.width, this.height, _levels.LEVELS[this.level]);
-      this.asteroids = this.cloud.asteroids;
-      this.spaceShip = new _spaceShip2.default(this.width / 2, this.height / 2);
+  var container = document.getElementById("content");
+  var canvas = document.getElementById("canvas");
+  var footer = document.getElementById("footer");
+  var playAgain = document.getElementById("play-again");
 
-      requestAnimationFrame(function (time) {
-        return _this2.update(time);
-      });
+  var ctx = canvas.getContext("2d");
+
+  var asteroids = [];
+  var bullets = [];
+  var showSpaceShip = true;
+  var animation = "";
+
+  var spaceShip = {};
+  var cloud = {};
+
+  var prevUpdateTime = 0;
+  var height = 0;
+  var width = 0;
+
+  var level = 0;
+  var score = 0;
+  var live = 3;
+
+  Game.init = function () {
+    window.addEventListener("resize", function (x) {
+      return Game.onResize();
+    });
+    playAgain.addEventListener("click", function (e) {
+      return Game.restart();
+    });
+
+    Game.start();
+  };
+
+  Game.start = function () {
+    var _asteroids;
+
+    footer.style.display = "none";
+
+    window.addEventListener("keydown", function (e) {
+      return Game.onKeydown(e);
+    });
+    window.addEventListener("keyup", function (e) {
+      return Game.onKeyup(e);
+    });
+    Game.onResize();
+
+    ctx.clearRect(0, 0, width, height);
+
+    cloud = (0, _cloud.buildCloud)(Game).init();
+    (_asteroids = asteroids).push.apply(_asteroids, _toConsumableArray(cloud.asteroids()));
+
+    spaceShip = (0, _spaceShip.buildSpaceShip)(Game).init();
+    requestAnimationFrame(function (time) {
+      return Game.update(time);
+    });
+  };
+
+  Game.restart = function () {
+    window.location.reload();
+  };
+
+  Game.draw = function () {
+    if (!live) {
+      Game.gameOver();
+      return Game;
     }
-  }, {
-    key: "restart",
-    value: function restart() {
 
-      window.location.reload();
+    if (score > Game.levels[level].score) {
+      level += 1;
     }
-  }, {
-    key: "draw",
-    value: function draw() {
-      var _this3 = this;
 
-      if (!this.live) {
-        this.gameOver();
-        return this;
+    var newAsteroids = [];
+
+    if (!asteroids.length) {
+      var _asteroids2;
+
+      cloud.refresh(Game);
+      (_asteroids2 = asteroids).push.apply(_asteroids2, _toConsumableArray(cloud.asteroids()));
+    }
+
+    if (spaceShip.timeBorn()) {
+      showSpaceShip = !showSpaceShip;
+      if (prevUpdateTime - spaceShip.timeBorn() >= Game.constants.SHOW_BORN_SPACE_SHIP) {
+        spaceShip.born(0);
+        showSpaceShip = true;
       }
+    }
 
-      if (this.score > _levels.LEVELS[this.level].score) {
-        this.level += 1;
+    if (spaceShip.alive()) {
+      live -= 1;
+      spaceShip = (0, _spaceShip.buildSpaceShip)(Game).init();
+      spaceShip.born(prevUpdateTime);
+    }
+
+    for (var i = 0; i < asteroids.length; i += 1) {
+      asteroids[i].move(width, height);
+      if (asteroids[i].isDied() && !asteroids[i].timeDied()) {
+        asteroids[i].setTimeDied(prevUpdateTime);
+        newAsteroids.push.apply(newAsteroids, _toConsumableArray(Game.createFragmentsAsteroid(asteroids[i])));
       }
+      Game.drawPolygon(asteroids[i].body(), asteroids[i].currentColor());
+    }
 
-      var newAsteroids = [];
+    if (newAsteroids.length) {
+      var _asteroids3;
 
-      if (!this.asteroids.length) {
-        this.asteroids = this.cloud.refresh(this.width, this.height, _levels.LEVELS[this.level]).asteroids;
+      (_asteroids3 = asteroids).push.apply(_asteroids3, newAsteroids);
+    }
+
+    asteroids = asteroids.filter(function (asteroid) {
+      return !asteroid.isDied() || asteroid.isDied() && prevUpdateTime - asteroid.timeDied() < Game.constants.SHOW_DIED_ASTEROID;
+    });
+
+    spaceShip.move(width, height);
+
+    if (showSpaceShip) {
+      Game.drawSpaceShip();
+    }
+
+    bullets = bullets.filter(function (bullet) {
+      return bullet.alive();
+    });
+
+    for (var _i = 0; _i < bullets.length; _i += 1) {
+      bullets[_i].move(width, height);
+      Game.drawPolygon(bullets[_i].body(), bullets[_i].color());
+    }
+
+    Game.drawText("Score: " + score, 8, 30);
+    Game.drawText("Lives: " + live, width - 110, 30);
+
+    Game.collisions();
+  };
+
+  Game.drawSpaceShip = function () {
+    Game.drawPolygon(spaceShip.body(), spaceShip.colorBody());
+    if (spaceShip.isMoving) {
+      Game.drawPolygon(spaceShip.fire(), spaceShip.colorFire());
+    }
+  };
+
+  Game.createFragmentsAsteroid = function (asteroid) {
+    var currentRadius = asteroid.currentRadius();
+    var newIndex = Game.constants.LIST_RADIUS.indexOf(currentRadius) - 1;
+    score += currentRadius;
+    if (newIndex > -1) {
+      var newRadius = Game.constants.LIST_RADIUS[newIndex];
+      return [cloud.newAsteroid(asteroid.center(), newRadius), cloud.newAsteroid(asteroid.center(), newRadius)];
+    }
+    return [];
+  };
+
+  Game.collisions = function () {
+    for (var i = 0; i < asteroids.length; i += 1) {
+      if (asteroids[i].isDied()) {
+        continue;
       }
-
-      if (this.spaceShip.born) {
-        this.showSpaseShip = !this.showSpaseShip;
-        if (this.prevUpdateTime - this.spaceShip.born >= CONST.SHOW_BORN_SPACE_SHIP) {
-          this.spaceShip.born = 0;
-          this.showSpaseShip = true;
+      for (var j = 0; j < bullets.length; j += 1) {
+        var flag = Game.collisionAsteroidBullet(asteroids[i], bullets[j]);
+        if (flag) {
+          asteroids[i].hitInc(1);
+          bullets[j].died(flag);
         }
       }
 
-      if (this.spaceShip.died) {
-        this.live -= 1;
-        this.spaceShip = new _spaceShip2.default(this.width / 2, this.height / 2);
-        this.spaceShip.born = this.prevUpdateTime;
-      }
-
-      for (var i = 0; i < this.asteroids.length; i += 1) {
-        this.asteroids[i].move(this.width, this.height);
-        if (this.asteroids[i].died && !this.asteroids[i].timeDied) {
-          this.asteroids[i].timeDied = this.prevUpdateTime;
-          newAsteroids.push.apply(newAsteroids, _toConsumableArray(this.createFragmentsAsteroid(this.asteroids[i])));
-        }
-        this.drawPolygon(this.asteroids[i].body, this.asteroids[i].currentColor);
-      }
-
-      if (newAsteroids.length) {
-        var _asteroids;
-
-        (_asteroids = this.asteroids).push.apply(_asteroids, newAsteroids);
-      }
-
-      this.asteroids = this.asteroids.filter(function (asteroid) {
-        return !asteroid.died || asteroid.died && _this3.prevUpdateTime - asteroid.timeDied < CONST.SHOW_DIED_ASTEROID;
-      });
-
-      this.spaceShip.move(this.width, this.height);
-
-      if (this.showSpaseShip) {
-        this.drawSpaceShip();
-      }
-
-      this.bullets = this.bullets.filter(function (bullet) {
-        return bullet.alive;
-      });
-
-      for (var _i = 0; _i < this.bullets.length; _i += 1) {
-        this.bullets[_i].move(this.width, this.height);
-        this.drawPolygon(this.bullets[_i].body, CONST.COLOR_BULLET);
-      }
-
-      this.drawLives();
-      this.drawScore();
-
-      this.collisions();
-    }
-  }, {
-    key: "drawSpaceShip",
-    value: function drawSpaceShip() {
-      this.drawPolygon(this.spaceShip.body, this.spaceShip.colorBody);
-      if (this.spaceShip.isMoving) {
-        this.drawPolygon(this.spaceShip.fire, this.spaceShip.colorFire);
+      if (!spaceShip.timeBorn() || prevUpdateTime - spaceShip.timeBorn() >= Game.constants.SHOW_BORN_SPACE_SHIP) {
+        Game.collisionAsteroidShip(asteroids[i], spaceShip);
       }
     }
-  }, {
-    key: "createFragmentsAsteroid",
-    value: function createFragmentsAsteroid(asteroid) {
-      var currentRadius = asteroid.currentRadius;
-      var newIndex = CONST.LIST_RADIUS.indexOf(currentRadius) - 1;
-      this.score += currentRadius;
-      if (newIndex > -1) {
-        var newRadius = CONST.LIST_RADIUS[newIndex];
-        return [this.cloud.newAsteroid(asteroid.center, newRadius), this.cloud.newAsteroid(asteroid.center, newRadius)];
-      }
-      return [];
-    }
-  }, {
-    key: "collisions",
-    value: function collisions() {
-      for (var i = 0; i < this.asteroids.length; i += 1) {
-        if (this.asteroids[i].died) {
-          continue;
-        }
-        for (var j = 0; j < this.bullets.length; j += 1) {
-          var flag = this.collisionAsteroidBullet(this.asteroids[i], this.bullets[j]);
-          if (flag) {
-            this.asteroids[i].hitInc = 1;
-            this.bullets[j].died = flag;
-          }
-        }
+  };
 
-        if (!this.spaceShip.born || this.prevUpdateTime - this.spaceShip.born >= CONST.SHOW_BORN_SPACE_SHIP) {
-          this.collisionAsteroidShip(this.asteroids[i], this.spaceShip);
-        }
-      }
-    }
-  }, {
-    key: "collisionAsteroidBullet",
-    value: function collisionAsteroidBullet(asteroid, bullet) {
-      var ab = bullet.length(asteroid.x, asteroid.y, bullet.x, bullet.y);
-      return ab < asteroid.radius + bullet.radius + 2;
-    }
-  }, {
-    key: "collisionAsteroidShip",
-    value: function collisionAsteroidShip(asteroid, spaceShip) {
-      var lines = spaceShip.lines;
-      for (var i = 0; i < lines.length; i += 1) {
-        if (asteroid.pointBetweenTwoPoints(asteroid, lines[i])) {
-          if (asteroid.lineAcrossAsteroid(asteroid, lines[i])) {
-            spaceShip.died = true;
-          }
-        }
-      }
-    }
-  }, {
-    key: "drawPolygon",
-    value: function drawPolygon(polygon, color) {
-      this.ctx.beginPath();
-      this.ctx.fillStyle = color;
-      this.ctx.moveTo(polygon[polygon.length - 1].x, polygon[polygon.length - 1].y);
-      for (var i = 0; i < polygon.length; i += 1) {
-        this.ctx.lineTo(polygon[i].x, polygon[i].y);
-      }
-      this.ctx.fill();
-      this.ctx.closePath();
-    }
-  }, {
-    key: "drawScore",
-    value: function drawScore() {
-      this.ctx.textAlign = "left";
-      this.ctx.font = "24px Arial";
-      this.ctx.fillStyle = CONST.COLOR_TEXT;
-      this.ctx.fillText("Score: " + this.score, 8, 30);
-    }
-  }, {
-    key: "drawLives",
-    value: function drawLives() {
-      this.ctx.textAlign = "left";
-      this.ctx.font = "24px Arial";
-      this.ctx.fillStyle = CONST.COLOR_TEXT;
-      this.ctx.fillText("Lives: " + this.live, this.width - 110, 30);
-    }
-  }, {
-    key: "onResize",
-    value: function onResize() {
-      this.width = this.container.clientWidth;
-      this.height = this.container.clientHeight;
+  Game.collisionAsteroidBullet = function (asteroid, bullet) {
+    var ab = Game.base.length(asteroid.center().x, asteroid.center().y, bullet.center().x, bullet.center().y);
+    return ab < asteroid.radius() + bullet.radius();
+  };
 
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
-    }
-  }, {
-    key: "onKeydown",
-    value: function onKeydown(e) {
-      if (e.code === "Space") {
-        this.bullets.push(this.spaceShip.shot());
-      }
-      if (e.code === "ArrowLeft") {
-        this.spaceShip.isTurnLeft = true;
-      }
-      if (e.code === "ArrowRight") {
-        this.spaceShip.isTurnRight = true;
-      }
-      if (e.code === "ArrowUp") {
-        this.spaceShip.isMoving = true;
+  Game.collisionAsteroidShip = function (asteroid, spaceShip) {
+    var lines = spaceShip.lines();
+    for (var i = 0; i < lines.length; i += 1) {
+      if (Game.base.pointBetweenTwoPoints(asteroid.center(), lines[i]) && Game.base.lineAcrossAsteroid(asteroid.center(), asteroid.radius(), lines[i])) {
+        spaceShip.died(true);
       }
     }
-  }, {
-    key: "onKeyup",
-    value: function onKeyup(e) {
-      if (e.code === "ArrowLeft") {
-        this.spaceShip.isTurnLeft = false;
-      }
-      if (e.code === "ArrowRight") {
-        this.spaceShip.isTurnRight = false;
-      }
-      if (e.code === "ArrowUp") {
-        this.spaceShip.isMoving = false;
-      }
+  };
+
+  Game.drawPolygon = function (polygon, color) {
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.moveTo(polygon[polygon.length - 1].x, polygon[polygon.length - 1].y);
+    for (var i = 0; i < polygon.length; i += 1) {
+      ctx.lineTo(polygon[i].x, polygon[i].y);
     }
-  }, {
-    key: "update",
-    value: function update(time) {
-      var _this4 = this;
+    ctx.fill();
+    ctx.closePath();
+  };
 
-      var dt = time - this.prevUpdateTime;
-      this.prevUpdateTime = time;
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      this.draw();
-      this.animation = requestAnimationFrame(function (time) {
-        return _this4.update(time);
-      });
+  Game.drawText = function (text, x, y) {
+    ctx.textAlign = "left";
+    ctx.font = "24px Arial";
+    ctx.fillStyle = Game.constants.COLOR_TEXT;
+    ctx.fillText(text, x, y);
+  };
+
+  Game.onResize = function () {
+    width = container.clientWidth;
+    height = container.clientHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+  };
+
+  Game.onKeydown = function (e) {
+    if (e.code === "Space") {
+      bullets.push(spaceShip.shot());
     }
-  }, {
-    key: "gameOver",
-    value: function gameOver() {
-      var _this5 = this;
-
-      window.cancelAnimationFrame(this.animation);
-      window.removeEventListener("keydown", function (e) {
-        return _this5.onKeydown(e);
-      });
-      window.removeEventListener("keyup", function (e) {
-        return _this5.onKeyup(e);
-      });
-
-      this.footer.style.display = "block";
-
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      this.ctx.font = "48px Arial";
-      this.ctx.fillStyle = CONST.COLOR_TEXT;
-      this.ctx.textAlign = "center";
-      this.ctx.fillText("You score: " + this.score, this.width / 2, this.height / 2 - 80);
-      this.ctx.font = "72px Arial";
-      this.ctx.fillStyle = CONST.COLOR_TEXT;
-      this.ctx.fillText("Game over", this.width / 2, this.height / 2);
+    if (e.code === "ArrowLeft") {
+      spaceShip.isTurnLeft(true);
     }
-  }]);
+    if (e.code === "ArrowRight") {
+      spaceShip.isTurnRight(true);
+    }
+    if (e.code === "ArrowUp") {
+      spaceShip.isMoving(true);
+    }
+  };
 
-  return Game;
-}();
+  Game.onKeyup = function (e) {
+    if (e.code === "ArrowLeft") {
+      spaceShip.isTurnLeft(false);
+    }
+    if (e.code === "ArrowRight") {
+      spaceShip.isTurnRight(false);
+    }
+    if (e.code === "ArrowUp") {
+      spaceShip.isMoving(false);
+    }
+  };
 
-exports.default = Game;
+  Game.update = function (time) {
+    var dt = time - prevUpdateTime;
+    prevUpdateTime = time;
+    ctx.clearRect(0, 0, width, height);
+    Game.draw();
+    animation = requestAnimationFrame(function (time) {
+      return Game.update(time);
+    });
+  };
 
-},{"../objects/cloud":9,"../objects/spaceShip":10,"./constants":2,"./levels":4}],4:[function(require,module,exports){
+  Game.gameOver = function () {
+    window.cancelAnimationFrame(animation);
+    window.removeEventListener("keydown", function (e) {
+      return Game.onKeydown(e);
+    });
+    window.removeEventListener("keyup", function (e) {
+      return Game.onKeyup(e);
+    });
+
+    footer.style.display = "block";
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = "48px Arial";
+    ctx.fillStyle = Game.constants.COLOR_TEXT;
+    ctx.textAlign = "center";
+    ctx.fillText("You score: " + score, width / 2, height / 2 - 80);
+    ctx.font = "72px Arial";
+    ctx.fillStyle = Game.constants.COLOR_TEXT;
+    ctx.fillText("Game over", width / 2, height / 2);
+  };
+
+  Game.height = function () {
+    return height;
+  };
+
+  Game.width = function () {
+    return width;
+  };
+
+  Game.level = function () {
+    return level;
+  };
+
+  return Game.init();
+})();
+
+},{"../objects/cloud":9,"../objects/spaceShip":10,"./base":1,"./constants":2,"./levels":4,"./objects":5}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var LEVELS = exports.LEVELS = [{
-  count: 7,
-  maxSpeed: 2,
-  score: 500
-}, {
-  count: 8,
-  maxSpeed: 2,
-  score: 1000
-}, {
-  count: 8,
-  maxSpeed: 3,
-  score: 2000
-}, {
-  count: 10,
-  maxSpeed: 3,
-  score: 3000
-}, {
-  count: 13,
-  maxSpeed: 4,
-  score: Infinity
-}];
+var buildLevels = exports.buildLevels = function buildLevels() {
+  return [{
+    count: 7,
+    maxSpeed: 2,
+    score: 500
+  }, {
+    count: 8,
+    maxSpeed: 2,
+    score: 1000
+  }, {
+    count: 8,
+    maxSpeed: 3,
+    score: 2000
+  }, {
+    count: 10,
+    maxSpeed: 3,
+    score: 3000
+  }, {
+    count: 13,
+    maxSpeed: 4,
+    score: Infinity
+  }];
+};
 
 },{}],5:[function(require,module,exports){
 "use strict";
@@ -591,28 +523,24 @@ var LEVELS = exports.LEVELS = [{
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var TMPL_ASTEROID = exports.TMPL_ASTEROID = [{ x: 6, y: -7 }, { x: 7, y: -6 }, { x: 8, y: -5 }, { x: 9, y: -4 }, { x: 8, y: 6 }, { x: -6, y: 8 }, { x: -5, y: 6 }, { x: -7, y: 7 }, { x: -8, y: 1 }, { x: -8, y: -2 }, { x: -8, y: -6 }, { x: -4, y: -9 }];
+var buildObjects = exports.buildObjects = function buildObjects() {
+  return {
+    TMPL_ASTEROID: [{ x: 6, y: -7 }, { x: 7, y: -6 }, { x: 8, y: -5 }, { x: 9, y: -4 }, { x: 8, y: 6 }, { x: -6, y: 8 }, { x: -5, y: 6 }, { x: -7, y: 7 }, { x: -8, y: 1 }, { x: -8, y: -2 }, { x: -8, y: -6 }, { x: -4, y: -9 }],
 
-var TMPL_BOOM = exports.TMPL_BOOM = [{ x: 7, y: -1 }, { x: 2, y: 1 }, { x: 5, y: 5 }, { x: 1, y: 2 }, { x: 0, y: 8 }, { x: -1, y: 2 }, { x: -4, y: 4 }, { x: -2, y: 1 }, { x: -8, y: 0 }, { x: -2, y: -1 }, { x: -5, y: -4 }, { x: -1, y: -3 }, { x: 1, y: -9 }, { x: 1, y: -2 }, { x: 5, y: -5 }, { x: 2, y: -1 }];
+    TMPL_BOOM: [{ x: 7, y: -1 }, { x: 2, y: 1 }, { x: 5, y: 5 }, { x: 1, y: 2 }, { x: 0, y: 8 }, { x: -1, y: 2 }, { x: -4, y: 4 }, { x: -2, y: 1 }, { x: -8, y: 0 }, { x: -2, y: -1 }, { x: -5, y: -4 }, { x: -1, y: -3 }, { x: 1, y: -9 }, { x: 1, y: -2 }, { x: 5, y: -5 }, { x: 2, y: -1 }],
 
-var TMPL_SPACE_SHIP = exports.TMPL_SPACE_SHIP = [{ x: 0, y: -20 }, { x: 15, y: 17 }, { x: 7, y: 10 }, { x: -7, y: 10 }, { x: -15, y: 17 }];
+    TMPL_SPACE_SHIP: [{ x: 0, y: -20 }, { x: 15, y: 17 }, { x: 7, y: 10 }, { x: -7, y: 10 }, { x: -15, y: 17 }],
 
-var TMPL_FIRE = exports.TMPL_FIRE = [{ x: 5, y: 10 }, { x: 0, y: 20 }, { x: -5, y: 10 }];
+    TMPL_FIRE: [{ x: 5, y: 10 }, { x: 0, y: 20 }, { x: -5, y: 10 }],
 
-var TMPL_BULLET = exports.TMPL_BULLET = [{ x: 2, y: -2 }, { x: -2, y: -2 }, { x: -2, y: 2 }, { x: 2, y: 2 }];
+    TMPL_BULLET: [{ x: 2, y: -2 }, { x: -2, y: -2 }, { x: -2, y: 2 }, { x: 2, y: 2 }]
+  };
+};
 
 },{}],6:[function(require,module,exports){
 'use strict';
 
-var _game = require('./core/game');
-
-var _game2 = _interopRequireDefault(_game);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-new _game2.default();
+require('./core/game');
 
 },{"./core/game":3}],7:[function(require,module,exports){
 "use strict";
@@ -620,774 +548,558 @@ new _game2.default();
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var buildAsteroid = exports.buildAsteroid = function buildAsteroid(x, y, radius, angle, maxSpeed, Game) {
+  var asteroid = {};
 
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+  var health = String(radius)[0] * 1;
+  var hit = 0;
+  var speed = {};
+  var isDied = false;
+  var time = 0;
+  var color = Game.constants.COLOR_ASTEROID;
+  var bodyCoordinates = {};
+
+  asteroid.init = function () {
+    var dir = Math.random() > 0.5 ? -1 : 1;
+    var value = Math.ceil(Math.random() * maxSpeed);
+    speed.moveX = dir * value;
+
+    dir = Math.random() > 0.5 ? -1 : 1;
+    value = Math.ceil(Math.random() * maxSpeed);
+    speed.moveY = dir * value;
+
+    value = Math.ceil(Math.random() * Game.constants.MAX_SPEED_ROTATION_ASTEROID);
+    speed.rotation = dir * value;
+    return asteroid;
   };
-}();
 
-var _base = require("../core/base");
+  asteroid.hitInc = function (value) {
+    hit += value;
+  };
 
-var _base2 = _interopRequireDefault(_base);
+  asteroid.body = function () {
+    return bodyCoordinates;
+  };
 
-var _objects = require("../core/objects");
+  asteroid.isDied = function () {
+    return isDied;
+  };
 
-var _constants = require("../core/constants");
+  asteroid.timeDied = function () {
+    return time;
+  };
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
+  asteroid.radius = function () {
+    return radius;
+  };
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
+  asteroid.setTimeDied = function (currentTime) {
+    time = currentTime;
+  };
 
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+  asteroid.center = function () {
+    return { x: x, y: y };
+  };
 
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+  asteroid.currentRadius = function () {
+    return radius;
+  };
 
-var Asteroid = function (_Base) {
-  _inherits(Asteroid, _Base);
+  asteroid.currentColor = function () {
+    return color;
+  };
 
-  function Asteroid(x, y, radius, angle, maxSpeed) {
-    _classCallCheck(this, Asteroid);
-
-    var _this = _possibleConstructorReturn(this, (Asteroid.__proto__ || Object.getPrototypeOf(Asteroid)).call(this));
-
-    _this.x = x;
-    _this.y = y;
-    _this.radius = radius;
-    _this.angle = angle;
-    _this.maxSpeed = maxSpeed;
-    _this.health = String(_this.radius)[0] * 1;
-    _this.hit = 0;
-
-    _this.speed = {};
-    _this.isDied = false;
-    _this.time = 0;
-    _this.color = _constants.COLOR_ASTEROID;
-    _this.init();
-    return _this;
-  }
-
-  _createClass(Asteroid, [{
-    key: "init",
-    value: function init() {
-      var dir = Math.random() > 0.5 ? -1 : 1;
-      var value = Math.ceil(Math.random() * this.maxSpeed);
-      this.speed.moveX = dir * value;
-
-      dir = Math.random() > 0.5 ? -1 : 1;
-      value = Math.ceil(Math.random() * this.maxSpeed);
-      this.speed.moveY = dir * value;
-
-      value = Math.ceil(Math.random() * 11);
-      this.speed.rotation = dir * value;
+  asteroid.moveX = function (maxX) {
+    if (!speed.moveX) {
+      return asteroid;
     }
-  }, {
-    key: "moveX",
-    value: function moveX(maxX) {
-      if (!this.speed.moveX) {
-        return this;
-      }
 
-      this.x += this.speed.moveX;
-      if (this.x > maxX) {
-        this.x = 0;
-      }
+    x += speed.moveX;
+    if (x > maxX) {
+      x = 0;
+    }
 
-      if (this.x < 0) {
-        this.x = maxX;
-      }
-      return this;
+    if (x < 0) {
+      x = maxX;
     }
-  }, {
-    key: "moveY",
-    value: function moveY(maxY) {
-      if (!this.speed.moveY) {
-        return this;
-      }
+    return asteroid;
+  };
 
-      this.y += this.speed.moveY;
-      if (this.y > maxY) {
-        this.y = 0;
-      }
+  asteroid.moveY = function (maxY) {
+    if (!speed.moveY) {
+      return asteroid;
+    }
 
-      if (this.y < 0) {
-        this.y = maxY;
-      }
+    y += speed.moveY;
+    if (y > maxY) {
+      y = 0;
+    }
 
-      return this;
+    if (y < 0) {
+      y = maxY;
     }
-  }, {
-    key: "calculateBody",
-    value: function calculateBody() {
-      var _this2 = this;
 
-      this.angle += this.speed.rotation;
-      this.angle = this.angle % 360;
+    return asteroid;
+  };
 
-      this.bodyCoord = this.createObject(_objects.TMPL_ASTEROID, this, this.health);
-      this.bodyCoord = this.bodyCoord.map(function (el) {
-        return _this2.rotate(_this2.x, _this2.y, el.x, el.y, _this2.angle);
-      });
-      return this;
-    }
-  }, {
-    key: "calculateBoom",
-    value: function calculateBoom() {
-      this.bodyCoord = this.createObject(_objects.TMPL_BOOM, this, this.health);
-    }
-  }, {
-    key: "move",
-    value: function move(maxX, maxY) {
-      if (this.hit >= this.health) {
-        this.isDied = true;
-        this.color = _constants.COLOR_BOOM;
-        this.calculateBoom();
-        return this;
-      }
+  asteroid.calculateBody = function () {
+    angle += speed.rotation;
+    angle = angle % 360;
 
-      return this.moveX(maxX).moveY(maxY).calculateBody();
-    }
-  }, {
-    key: "hitInc",
-    set: function set(value) {
-      this.hit += value;
-    }
-  }, {
-    key: "body",
-    get: function get() {
-      return this.bodyCoord;
-    }
-  }, {
-    key: "died",
-    get: function get() {
-      return this.isDied;
-    }
-  }, {
-    key: "timeDied",
-    get: function get() {
-      return this.time;
-    },
-    set: function set(time) {
-      this.time = time;
-    }
-  }, {
-    key: "center",
-    get: function get() {
-      return { x: this.x, y: this.y };
-    }
-  }, {
-    key: "currentRadius",
-    get: function get() {
-      return this.radius;
-    }
-  }, {
-    key: "currentColor",
-    get: function get() {
-      return this.color;
-    }
-  }]);
+    bodyCoordinates = Game.base.createObject(Game.templates.TMPL_ASTEROID, asteroid.center(), health);
+    bodyCoordinates = bodyCoordinates.map(function (el) {
+      return Game.base.rotate(x, y, el.x, el.y, angle);
+    });
+    return asteroid;
+  };
 
-  return Asteroid;
-}(_base2.default);
+  asteroid.calculateBoom = function () {
+    bodyCoordinates = Game.base.createObject(Game.templates.TMPL_BOOM, asteroid.center(), health);
+  };
 
-exports.default = Asteroid;
+  asteroid.move = function (maxX, maxY) {
+    if (hit >= health) {
+      isDied = true;
+      color = Game.constants.COLOR_BOOM;
+      asteroid.calculateBoom();
+      return asteroid;
+    }
 
-},{"../core/base":1,"../core/constants":2,"../core/objects":5}],8:[function(require,module,exports){
+    return asteroid.moveX(maxX).moveY(maxY).calculateBody();
+  };
+
+  return asteroid;
+};
+
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var buildBullet = exports.buildBullet = function buildBullet(x, y, x0, y0, Game) {
+  var bullet = {};
 
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+  var center = { x: x, y: y };
+  var ship = { x0: x0, y0: y0 };
+  var speed = Game.constants.SPEED_BULLET;
+
+  var dx = 0;
+  var dy = 0;
+  var k = 0;
+
+  var isDied = false;
+  var maxLengthPath = Game.constants.LENGTH_PATH_BULLET;
+  var lengthPath = 0;
+  var color = Game.constants.COLOR_BULLET;
+
+  var bulletCoordinates = [];
+
+  bullet.init = function () {
+    bulletCoordinates = bullet.calculateBody();
+    k = Game.base.coefficientK(ship.x0, ship.y0, center.x, center.y);
+    bullet.calculateDelta(k);
+    return bullet;
   };
-}();
 
-var _base = require("../core/base");
+  bullet.calculateDelta = function (coefficientK) {
+    var dirCondition = void 0;
 
-var _base2 = _interopRequireDefault(_base);
-
-var _constants = require("../core/constants");
-
-var _objects = require("../core/objects");
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var Bullet = function (_Base) {
-  _inherits(Bullet, _Base);
-
-  function Bullet(_ref, x0, y0) {
-    var x = _ref.x,
-        y = _ref.y;
-
-    _classCallCheck(this, Bullet);
-
-    var _this = _possibleConstructorReturn(this, (Bullet.__proto__ || Object.getPrototypeOf(Bullet)).call(this));
-
-    _this.x = x;
-    _this.y = y;
-    _this.ship = { x0: x0, y0: y0 };
-    _this.speed = _constants.SPEED_BULLET;
-
-    _this.dx = 0;
-    _this.dy = 0;
-
-    _this.isDied = false;
-    _this.maxLengthPath = _constants.LENGTH_PATH_BULLET;
-    _this.lengthPath = 0;
-
-    _this.init();
-    return _this;
-  }
-
-  _createClass(Bullet, [{
-    key: "init",
-    value: function init() {
-      this.bulletCoord = this.calculateBody();
-      this.k = this.coefficientK(this.ship.x0, this.ship.y0, this.x, this.y);
-      this.calculateDelta(this.k);
+    if (Math.abs(coefficientK) === Infinity) {
+      dirCondition = ship.y0 > center.y;
+      dx = 0;
+      dy = speed * (dirCondition ? -1 : 1);
+      return bullet;
     }
-  }, {
-    key: "calculateDelta",
-    value: function calculateDelta(coefficientK) {
-      var dirCondition = void 0;
 
-      if (Math.abs(coefficientK) === Infinity) {
-        dirCondition = this.ship.y0 > this.y;
-        this.dx = 0;
-        this.dy = this.speed * (dirCondition ? -1 : 1);
-        return;
-      }
+    dirCondition = ship.x0 > center.x;
 
-      dirCondition = this.ship.x0 > this.x;
-
-      if (!coefficientK) {
-        this.dx = this.speed * (dirCondition ? -1 : 1);
-        this.dy = 0;
-        return;
-      }
-
-      this.dx = (dirCondition ? -1 : 1) * this.calculateDX(this.speed, coefficientK);
-      this.dy = this.calculateDY(this.dx, coefficientK);
+    if (!coefficientK) {
+      dx = speed * (dirCondition ? -1 : 1);
+      dy = 0;
+      return bullet;
     }
-  }, {
-    key: "calculateBody",
-    value: function calculateBody() {
-      return this.createObject(_objects.TMPL_BULLET, this);
-    }
-  }, {
-    key: "beforeZero",
-    value: function beforeZero(ind, max) {
-      if (this[ind] < 0) {
-        this.bulletCoord = this.mutateObject(this.bulletCoord, ind, function (value) {
-          return max + value;
-        });
-        this[ind] = max;
-      }
-      return this;
-    }
-  }, {
-    key: "afterMax",
-    value: function afterMax(ind, max) {
-      if (this[ind] > max) {
-        this.bulletCoord = this.mutateObject(this.bulletCoord, ind, function (value) {
-          return value - max;
-        });
-        this[ind] = 0;
-      }
-      return this;
-    }
-  }, {
-    key: "move",
-    value: function move(maxX, maxY) {
-      var _this2 = this;
 
-      if (this.lengthPath > this.maxLengthPath) {
-        this.isDied = true;
-        return;
-      }
+    dx = (dirCondition ? -1 : 1) * Game.base.calculateDX(speed, coefficientK);
+    dy = Game.base.calculateDY(dx, coefficientK);
+  };
 
-      this.beforeZero("x", maxX).afterMax("x", maxX).beforeZero("y", maxY).afterMax("y", maxY);
+  bullet.calculateBody = function () {
+    return Game.base.createObject(Game.templates.TMPL_BULLET, bullet.center());
+  };
 
-      this.lengthPath += this.speed;
-      this.bulletCoord = this.bulletCoord.map(function (el) {
-        return _this2.pointInc(el, _this2.dx, _this2.dy);
+  bullet.center = function () {
+    return center;
+  };
+
+  bullet.beforeZero = function (ind, max) {
+    if (center[ind] < 0) {
+      bulletCoordinates = Game.base.mutateObject(bulletCoordinates, ind, function (value) {
+        return max + value;
       });
-      this.x += this.dx;
-      this.y += this.dy;
+      center[ind] = max;
     }
-  }, {
-    key: "died",
-    set: function set(flag) {
-      this.isDied = flag;
-    }
-  }, {
-    key: "body",
-    get: function get() {
-      return this.bulletCoord;
-    }
-  }, {
-    key: "alive",
-    get: function get() {
-      return !this.isDied;
-    }
-  }, {
-    key: "radius",
-    get: function get() {
-      return this.length(this.x, this.y, this.bulletCoord[0].x, this.bulletCoord[0].y);
-    }
-  }]);
+    return bullet;
+  };
 
-  return Bullet;
-}(_base2.default);
+  bullet.afterMax = function (ind, max) {
+    if (center[ind] > max) {
+      bulletCoordinates = Game.base.mutateObject(bulletCoordinates, ind, function (value) {
+        return value - max;
+      });
+      center[ind] = 0;
+    }
+    return bullet;
+  };
 
-exports.default = Bullet;
+  bullet.move = function (maxX, maxY) {
+    if (lengthPath > maxLengthPath) {
+      isDied = true;
+      return bullet;
+    }
 
-},{"../core/base":1,"../core/constants":2,"../core/objects":5}],9:[function(require,module,exports){
+    bullet.beforeZero("x", maxX).afterMax("x", maxX).beforeZero("y", maxY).afterMax("y", maxY);
+
+    lengthPath += speed;
+    bulletCoordinates = bulletCoordinates.map(function (el) {
+      return Game.base.pointInc(el, dx, dy);
+    });
+    center.x += dx;
+    center.y += dy;
+  };
+
+  bullet.died = function (flag) {
+    isDied = flag;
+  };
+
+  bullet.body = function () {
+    return bulletCoordinates;
+  };
+
+  bullet.alive = function () {
+    return !isDied;
+  };
+
+  bullet.color = function () {
+    return color;
+  };
+
+  bullet.radius = function () {
+    return Game.base.length(center.x, center.y, bulletCoordinates[0].x, bulletCoordinates[0].y);
+  };
+
+  return bullet;
+};
+
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.buildCloud = undefined;
 
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+var _asteroid = require("../objects/asteroid");
+
+var buildCloud = exports.buildCloud = function buildCloud(Game) {
+  var cloud = {};
+
+  var width = Game.width();
+  var height = Game.height();
+  var params = Game.levels[Game.level()];
+
+  var count = params.count;
+  var maxSpeed = params.maxSpeed;
+  var asteroids = [];
+  var listRadius = Game.constants.LIST_RADIUS;
+  var startAngle = Game.constants.START_ANGLE;
+
+  cloud.init = function () {
+    cloud.generate(count);
+    return cloud;
   };
-}();
 
-var _asteroid = require("./asteroid");
-
-var _asteroid2 = _interopRequireDefault(_asteroid);
-
-var _constants = require("../core/constants");
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _toConsumableArray(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }return arr2;
-  } else {
-    return Array.from(arr);
-  }
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-var Cloud = function () {
-  function Cloud(width, height, params) {
-    _classCallCheck(this, Cloud);
-
-    this.count = params.count;
-    this.maxSpeed = params.maxSpeed;
-    this.cloud = [];
-    this.width = width;
-    this.height = height;
-    this.listRadius = _constants.LIST_RADIUS;
-    this.startAngle = _constants.START_ANGLE;
-    this.init();
-  }
-
-  _createClass(Cloud, [{
-    key: "init",
-    value: function init() {
-      this.generate(this.count);
+  cloud.generate = function (n) {
+    asteroids.length = 0;
+    for (var i = 0; i < n; i += 1) {
+      asteroids.push(cloud.addAsteroid());
     }
-  }, {
-    key: "refresh",
-    value: function refresh(width, height, params) {
-      this.count = params.count;
-      this.maxSpeed = params.maxSpeed;
-      this.width = width;
-      this.height = height;
-      this.cloud.length = 0;
-      this.init();
-      return this;
+  };
+
+  cloud.addAsteroid = function () {
+    var radius = listRadius[Math.trunc(Math.random() * listRadius.length)];
+    var angle = Math.trunc(Math.random() * startAngle);
+    var x = 0;
+    var y = 0;
+
+    var variant = Math.random() > 0.5 ? 1 : 0;
+
+    if (variant) {
+      x = Math.random() > 0.5 ? width : 0;
+      y = Math.random() * height;
+    } else {
+      x = Math.random() * width;
+      y = Math.random() > 0.5 ? height : 0;
     }
-  }, {
-    key: "generate",
-    value: function generate(n) {
-      this.cloud.length = 0;
-      for (var i = 0; i < n; i += 1) {
-        this.cloud.push(this.addAsteroid());
-      }
-    }
-  }, {
-    key: "addAsteroid",
-    value: function addAsteroid() {
-      var radius = this.listRadius[Math.trunc(Math.random() * this.listRadius.length)];
-      var angle = Math.trunc(Math.random() * this.startAngle);
-      var x = 0;
-      var y = 0;
 
-      var variant = Math.random() > 0.5 ? 1 : 0;
+    return (0, _asteroid.buildAsteroid)(x, y, radius, angle, maxSpeed, Game).init();
+  };
 
-      if (variant) {
-        x = Math.random() > 0.5 ? this.width : 0;
-        y = Math.random() * this.height;
-      } else {
-        x = Math.random() * this.width;
-        y = Math.random() > 0.5 ? this.height : 0;
-      }
+  cloud.refresh = function (Game) {
+    params = Game.levels[Game.level()];
+    count = params.count;
+    maxSpeed = params.maxSpeed;
+    width = Game.width();
+    height = Game.height();
+    asteroids.length = 0;
+    cloud.init();
+    return cloud;
+  };
 
-      return new _asteroid2.default(x, y, radius, angle, this.maxSpeed);
-    }
-  }, {
-    key: "newAsteroid",
-    value: function newAsteroid(center, radius) {
-      var angle = Math.trunc(Math.random() * this.startAngle);
-      return new _asteroid2.default(center.x, center.y, radius, angle, this.maxSpeed);
-    }
-  }, {
-    key: "asteroids",
-    get: function get() {
-      return [].concat(_toConsumableArray(this.cloud));
-    }
-  }]);
+  cloud.newAsteroid = function (center, radius) {
+    var angle = Math.trunc(Math.random() * startAngle);
+    return (0, _asteroid.buildAsteroid)(center.x, center.y, radius, angle, maxSpeed, Game).init();
+  };
 
-  return Cloud;
-}();
+  cloud.asteroids = function () {
+    return [].concat(asteroids);
+  };
 
-exports.default = Cloud;
+  return cloud;
+};
 
-},{"../core/constants":2,"./asteroid":7}],10:[function(require,module,exports){
+},{"../objects/asteroid":7}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.buildSpaceShip = undefined;
 
-var _createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+var _bullet = require("../objects/bullet");
+
+var buildSpaceShip = exports.buildSpaceShip = function buildSpaceShip(Game) {
+  var spaceShip = {};
+
+  var center = { x: Game.width() / 2, y: Game.height() / 2 };
+
+  var speed = Game.constants.SPEED_SPACE_SHIP;
+  var speedRotation = Game.constants.SPEED_ROTATION_SHIP;
+
+  var colorBody = Game.constants.COLOR_SHIP;
+  var colorFire = Game.constants.COLOR_FIRE;
+
+  var timeBorn = 0;
+  var isDied = false;
+  var isMoving = false;
+  var isTurnLeft = false;
+  var isTurnRight = false;
+  var bodyCoordinates = [];
+  var fireCoordinates = [];
+
+  spaceShip.init = function () {
+    return spaceShip.calculateBody().calculateFire();
   };
-}();
 
-var _bullet = require("./bullet");
+  spaceShip.calculateBody = function () {
+    bodyCoordinates = Game.base.createObject(Game.templates.TMPL_SPACE_SHIP, center);
+    return spaceShip;
+  };
 
-var _bullet2 = _interopRequireDefault(_bullet);
+  spaceShip.calculateFire = function () {
+    fireCoordinates = Game.base.createObject(Game.templates.TMPL_FIRE, center);
+    return spaceShip;
+  };
 
-var _base = require("../core/base");
+  spaceShip.shot = function () {
+    var point = bodyCoordinates[0];
+    return (0, _bullet.buildBullet)(point.x, point.y, center.x, center.y, Game).init();
+  };
 
-var _base2 = _interopRequireDefault(_base);
-
-var _constants = require("../core/constants");
-
-var _objects = require("../core/objects");
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var SpaceShip = function (_Base) {
-  _inherits(SpaceShip, _Base);
-
-  function SpaceShip(x, y) {
-    _classCallCheck(this, SpaceShip);
-
-    var _this = _possibleConstructorReturn(this, (SpaceShip.__proto__ || Object.getPrototypeOf(SpaceShip)).call(this));
-
-    _this.x = x;
-    _this.y = y;
-    _this.speed = _constants.SPEED_SPACE_SHIP;
-    _this.rotation = _constants.SPEED_ROTATION_SHIP;
-
-    _this.colorBody = _constants.COLOR_SHIP;
-    _this.colorFire = _constants.COLOR_FIRE;
-
-    _this.timeBorn = 0;
-    _this.isDied = false;
-    _this.isMoving = false;
-    _this.isTurnLeft = false;
-    _this.isTurnRight = false;
-    _this.init();
-    return _this;
-  }
-
-  _createClass(SpaceShip, [{
-    key: "init",
-    value: function init() {
-      this.calculateBody().calculateFire();
+  spaceShip.move = function (maxX, maxY) {
+    if (isDied) {
+      bodyCoordinates = Game.base.createObject(Game.templates.TMPL_BOOM, center, Game.constants.LIST_RADIUS[Game.constants.LIST_RADIUS.length - 1]);
+      fireCoordinates = Game.base.createObject(Game.templates.TMPL_BOOM, center, Game.constants.LIST_RADIUS[0]);
+      colorBody = Game.constants.COLOR_BOOM;
+      return spaceShip;
     }
-  }, {
-    key: "calculateBody",
-    value: function calculateBody() {
-      this.bodyCoord = this.createObject(_objects.TMPL_SPACE_SHIP, this);
-      return this;
-    }
-  }, {
-    key: "calculateFire",
-    value: function calculateFire() {
-      this.fireCoord = this.createObject(_objects.TMPL_FIRE, this);
-      return this;
-    }
-  }, {
-    key: "shot",
-    value: function shot() {
-      return new _bullet2.default(this.bodyCoord[0], this.x, this.y);
-    }
-  }, {
-    key: "move",
-    value: function move(maxX, maxY) {
-      if (this.isDied) {
-        this.bodyCoord = this.createObject(_objects.TMPL_BOOM, this, _constants.LIST_RADIUS[_constants.LIST_RADIUS.length - 1]);
-        this.fireCoord = this.createObject(_objects.TMPL_BOOM, this, _constants.LIST_RADIUS[0]);
-        this.colorBody = _constants.COLOR_BOOM;
-        return this;
-      }
 
-      if (this.isMoving) {
-        this.calculateMove(maxX, maxY);
-      }
-      if (this.isTurnLeft) {
-        this.rotateLeft();
-      }
-      if (this.isTurnRight) {
-        this.rotateRight();
-      }
+    if (isMoving) {
+      spaceShip.calculateMove(maxX, maxY);
     }
-  }, {
-    key: "rotateRight",
-    value: function rotateRight() {
-      var _this2 = this;
+    if (isTurnLeft) {
+      spaceShip.rotateLeft();
+    }
+    if (isTurnRight) {
+      spaceShip.rotateRight();
+    }
+  };
 
-      this.bodyCoord = this.bodyCoord.map(function (el) {
-        return _this2.rotate(_this2.x, _this2.y, el.x, el.y, _this2.rotation);
+  spaceShip.rotateRight = function () {
+    bodyCoordinates = bodyCoordinates.map(function (el) {
+      return Game.base.rotate(center.x, center.y, el.x, el.y, speedRotation);
+    });
+    fireCoordinates = fireCoordinates.map(function (el) {
+      return Game.base.rotate(center.x, center.y, el.x, el.y, speedRotation);
+    });
+    return spaceShip;
+  };
+
+  spaceShip.rotateLeft = function () {
+    bodyCoordinates = bodyCoordinates.map(function (el) {
+      return Game.base.rotate(center.x, center.y, el.x, el.y, -1 * speedRotation);
+    });
+    fireCoordinates = fireCoordinates.map(function (el) {
+      return Game.base.rotate(center.x, center.y, el.x, el.y, -1 * speedRotation);
+    });
+    return spaceShip;
+  };
+
+  // todo переробити на загальний метод beforeZero та afterMax
+  spaceShip.beforeZero = function (ind, max) {
+    if (center[ind] < 0) {
+      bodyCoordinates = Game.base.mutateObject(bodyCoordinates, ind, function (value) {
+        return max + value;
       });
-      this.fireCoord = this.fireCoord.map(function (el) {
-        return _this2.rotate(_this2.x, _this2.y, el.x, el.y, _this2.rotation);
+      fireCoordinates = Game.base.mutateObject(fireCoordinates, ind, function (value) {
+        return max + value;
       });
-      return this;
+      center[ind] = max;
     }
-  }, {
-    key: "rotateLeft",
-    value: function rotateLeft() {
-      var _this3 = this;
+    return spaceShip;
+  };
 
-      this.bodyCoord = this.bodyCoord.map(function (el) {
-        return _this3.rotate(_this3.x, _this3.y, el.x, el.y, -1 * _this3.rotation);
+  spaceShip.afterMax = function (ind, max) {
+    if (center[ind] > max) {
+      bodyCoordinates = Game.base.mutateObject(bodyCoordinates, ind, function (value) {
+        return value - max;
       });
-      this.fireCoord = this.fireCoord.map(function (el) {
-        return _this3.rotate(_this3.x, _this3.y, el.x, el.y, -1 * _this3.rotation);
+      fireCoordinates = Game.base.mutateObject(fireCoordinates, ind, function (value) {
+        return value - max;
       });
-      return this;
+      center[ind] = 0;
     }
-  }, {
-    key: "beforeZero",
-    value: function beforeZero(ind, max) {
-      if (this[ind] < 0) {
-        this.bodyCoord = this.mutateObject(this.bodyCoord, ind, function (value) {
-          return max + value;
-        });
-        this.fireCoord = this.mutateObject(this.fireCoord, ind, function (value) {
-          return max + value;
-        });
-        this[ind] = max;
-      }
-      return this;
+    return spaceShip;
+  };
+
+  spaceShip.calculateMove = function (maxX, maxY) {
+    spaceShip.beforeZero("x", maxX).afterMax("x", maxX).beforeZero("y", maxY).afterMax("y", maxY);
+
+    var coefficientK = Game.base.coefficientK(center.x, center.y, bodyCoordinates[0].x, bodyCoordinates[0].y);
+
+    if (Math.abs(coefficientK) === Infinity) {
+      spaceShip.lineX();
+      return spaceShip;
     }
-  }, {
-    key: "afterMax",
-    value: function afterMax(ind, max) {
-      if (this[ind] > max) {
-        this.bodyCoord = this.mutateObject(this.bodyCoord, ind, function (value) {
-          return value - max;
-        });
-        this.fireCoord = this.mutateObject(this.fireCoord, ind, function (value) {
-          return value - max;
-        });
-        this[ind] = 0;
-      }
-      return this;
+    if (!coefficientK) {
+      spaceShip.lineY();
+      return spaceShip;
     }
-  }, {
-    key: "calculateMove",
-    value: function calculateMove(maxX, maxY) {
-      this.beforeZero("x", maxX).afterMax("x", maxX).beforeZero("y", maxY).afterMax("y", maxY);
+    spaceShip.lineXY(coefficientK);
 
-      var coefficientK = this.coefficientK(this.x, this.y, this.bodyCoord[0].x, this.bodyCoord[0].y);
+    return spaceShip;
+  };
 
-      if (Math.abs(coefficientK) === Infinity) {
-        this.lineX();
-        return this;
-      }
-      if (!coefficientK) {
-        this.lineY();
-        return this;
-      }
-      this.lineXY(coefficientK);
+  spaceShip.lineXY = function (coefficientK) {
+    var dx = Game.base.calculateDX(speed, coefficientK);
+    var dy = Game.base.calculateDY(dx, coefficientK);
 
-      return this;
-    }
-  }, {
-    key: "lineXY",
-    value: function lineXY(coefficientK) {
-      var _this4 = this;
+    var dirCondition = center.x > bodyCoordinates[0].x;
 
-      var dx = this.calculateDX(this.speed, coefficientK);
-      var dy = this.calculateDY(dx, coefficientK);
+    bodyCoordinates = bodyCoordinates.map(function (el) {
+      return dirCondition ? Game.base.pointDec(el, dx, dy) : Game.base.pointInc(el, dx, dy);
+    });
 
-      var dirCondition = this.x > this.bodyCoord[0].x;
+    fireCoordinates = fireCoordinates.map(function (el) {
+      return dirCondition ? Game.base.pointDec(el, dx, dy) : Game.base.pointInc(el, dx, dy);
+    });
 
-      this.bodyCoord = this.bodyCoord.map(function (el) {
-        return dirCondition ? _this4.pointDec(el, dx, dy) : _this4.pointInc(el, dx, dy);
-      });
-      this.fireCoord = this.fireCoord.map(function (el) {
-        return dirCondition ? _this4.pointDec(el, dx, dy) : _this4.pointInc(el, dx, dy);
-      });
+    center.x = Game.base.changeValue(dirCondition, center.x, dx);
+    center.y = Game.base.changeValue(dirCondition, center.y, dy);
+  };
 
-      this.x = this.changeValue(dirCondition, this.x, dx);
-      this.y = this.changeValue(dirCondition, this.y, dy);
-    }
-  }, {
-    key: "lineX",
-    value: function lineX() {
-      var _this5 = this;
+  spaceShip.lineX = function () {
+    var dirCondition = center.y > bodyCoordinates[0].y;
 
-      var dirCondition = this.y > this.bodyCoord[0].y;
+    bodyCoordinates = Game.base.mutateObject(bodyCoordinates, "y", function (value) {
+      return Game.base.changeValue(dirCondition, value, speed);
+    });
 
-      this.bodyCoord = this.mutateObject(this.bodyCoord, "y", function (value) {
-        return _this5.changeValue(dirCondition, value, _this5.speed);
-      });
+    fireCoordinates = Game.base.mutateObject(fireCoordinates, "y", function (value) {
+      return Game.base.changeValue(dirCondition, value, speed);
+    });
 
-      this.fireCoord = this.mutateObject(this.fireCoord, "y", function (value) {
-        return _this5.changeValue(dirCondition, value, _this5.speed);
-      });
+    center.y = Game.base.changeValue(dirCondition, center.y, speed);
+  };
 
-      this.y = this.changeValue(dirCondition, this.y, this.speed);
-    }
-  }, {
-    key: "lineY",
-    value: function lineY() {
-      var _this6 = this;
+  spaceShip.lineY = function () {
+    var dirCondition = center.x > bodyCoordinates[0].x;
 
-      var dirCondition = this.x > this.bodyCoord[0].x;
+    bodyCoordinates = Game.base.mutateObject(bodyCoordinates, "x", function (value) {
+      return Game.base.changeValue(dirCondition, value, speed);
+    });
 
-      this.bodyCoord = this.mutateObject(this.bodyCoord, "x", function (value) {
-        return _this6.changeValue(dirCondition, value, _this6.speed);
-      });
+    fireCoordinates = Game.base.mutateObject(fireCoordinates, "x", function (value) {
+      return Game.base.changeValue(dirCondition, value, speed);
+    });
 
-      this.fireCoord = this.mutateObject(this.fireCoord, "x", function (value) {
-        return _this6.changeValue(dirCondition, value, _this6.speed);
-      });
+    center.x = Game.base.changeValue(dirCondition, center.x, speed);
+  };
 
-      this.x = this.changeValue(dirCondition, this.x, this.speed);
-    }
-  }, {
-    key: "lines",
-    get: function get() {
-      return [[this.bodyCoord[0], this.bodyCoord[1]], [this.bodyCoord[1], this.bodyCoord[this.bodyCoord.length - 1]], [this.bodyCoord[this.bodyCoord.length - 1], this.bodyCoord[0]]];
-    }
-  }, {
-    key: "body",
-    get: function get() {
-      return this.bodyCoord;
-    }
-  }, {
-    key: "fire",
-    get: function get() {
-      return this.fireCoord;
-    }
-  }, {
-    key: "died",
-    set: function set(flag) {
-      this.isDied = flag;
-    },
-    get: function get() {
-      return this.isDied;
-    }
-  }, {
-    key: "born",
-    set: function set(time) {
-      this.timeBorn = time;
-    },
-    get: function get() {
-      return this.timeBorn;
-    }
-  }]);
+  spaceShip.lines = function () {
+    return [[bodyCoordinates[0], bodyCoordinates[1]], [bodyCoordinates[1], bodyCoordinates[bodyCoordinates.length - 1]], [bodyCoordinates[bodyCoordinates.length - 1], bodyCoordinates[0]]];
+  };
 
-  return SpaceShip;
-}(_base2.default);
+  spaceShip.body = function () {
+    return bodyCoordinates;
+  };
 
-exports.default = SpaceShip;
+  spaceShip.fire = function () {
+    return fireCoordinates;
+  };
 
-},{"../core/base":1,"../core/constants":2,"../core/objects":5,"./bullet":8}]},{},[6])
+  spaceShip.died = function (flag) {
+    isDied = flag;
+  };
+
+  spaceShip.alive = function () {
+    return isDied;
+  };
+
+  spaceShip.born = function (time) {
+    timeBorn = time;
+  };
+
+  spaceShip.timeBorn = function () {
+    return timeBorn;
+  };
+
+  spaceShip.speedRotation = function () {
+    return speedRotation;
+  };
+
+  spaceShip.colorBody = function () {
+    return colorBody;
+  };
+
+  spaceShip.colorFire = function () {
+    return colorFire;
+  };
+
+  spaceShip.isMoving = function (flag) {
+    isMoving = flag;
+  };
+
+  spaceShip.isTurnLeft = function (flag) {
+    isTurnLeft = flag;
+  };
+
+  spaceShip.isTurnRight = function (flag) {
+    isTurnRight = flag;
+  };
+
+  return spaceShip;
+};
+
+},{"../objects/bullet":8}]},{},[6])
 //# sourceMappingURL=game.js.map
