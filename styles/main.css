@@ -49,6 +49,10 @@ canvas {
   visibility: hidden;
 }
 
-#play-again {
+#play {
+  cursor: pointer;
+}
+
+#tutorial {
   cursor: pointer;
 }
